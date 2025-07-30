@@ -7,12 +7,17 @@ AI-powered binary analysis tool that combines **Radare2** disassembly with **Cha
 ### 🔍 Binary Analysis
 - **Full Binary Disassembly**: Complete disassembly of executable files using Radare2
 - **Symbol Tree**: Organized view of functions, imports, exports, and strings
+<img width="354" height="354" alt="image" src="https://github.com/user-attachments/assets/d63fd204-6483-4b28-8b69-6efc5737fc84" />
+
 
 ### 🤖 AI-Powered Analysis
 - **ChatGPT Integration**: Chat directly with ChatGPT about your binary analysis
 - **Contextual Understanding**: Full disassembly is automatically provided as context to ChatGPT
 - **Python Code Generation**: Convert assembly code to Python with the "Analyze Full Disassembly to Python" button
 - **Interactive Q&A**: Ask questions about functions, vulnerabilities, code patterns, and more
+  <img width="700" height="333" alt="image" src="https://github.com/user-attachments/assets/e5da4dd7-0722-416f-8502-4e961b3b9d56" />
+<img width="590" height="411" alt="image" src="https://github.com/user-attachments/assets/e334f01f-326e-447d-8193-42ad0a4d2b8d" />
+
 
 ### 📁 Supported Features
 - **Imports & Exports**: View and analyze imported/exported functions
@@ -23,7 +28,7 @@ AI-powered binary analysis tool that combines **Radare2** disassembly with **Cha
 ## ⚙️ Configuration
 
 1. **Configure OpenAI API Key**:
-   Edit `app/config.json`:
+   Edit `dist/win-unpacked/config.json`:
    ```json
    {
      "openai_api_key": "your-openai-api-key-here",
