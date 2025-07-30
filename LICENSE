@@ -1,0 +1,44 @@
+Business Source License 1.1
+
+Parameters
+
+Licensor: MetysAI Team (contact: daniel@metysai.info)
+Licensed Work: MetysAI - Disassembler (including source code and binaries, except where third-party software is explicitly noted)
+Additional Use Grant: The Licensed Work may be used, copied, modified, and deployed for non-commercial purposes.
+Change Date: 2028-01-01
+Change License: Apache License, Version 2.0
+
+Terms
+
+The Licensed Work is provided under the terms of the Business Source License 1.1 (the "License"). A copy of the License is available at: https://mariadb.com/bsl11
+
+Use Limitation: The Licensed Work may not be used for any Commercial Purpose, except as expressly provided under this License.
+
+For the purposes of this License, "Commercial Purpose" means the use, reproduction, or distribution of the Licensed Work (a) for a fee or other consideration, or (b) in any manner that is primarily intended for or directed toward commercial advantage or monetary compensation.
+
+Change Date: After the Change Date, the Licensed Work will be automatically re-licensed under the Change License.
+
+Other Use Conditions:
+- You may redistribute unmodified copies of the Licensed Work.
+- You may create modified versions for non-commercial use only.
+- Any derivative works must include this same license and attribution to the original Licensor.
+- This license applies to all parts of the Licensed Work except for third-party dependencies, such as Radare2, which remain under their respective licenses (e.g., GPLv3).
+
+Attribution Requirement:
+All copies and substantial portions of the Licensed Work must retain this license notice and the following attribution:
+    "This software includes components developed by the MetysAI Team, licensed under the Business Source License 1.1."
+
+For commercial licensing inquiries, please contact: metysai@yourdomain.com
+
+---
+
+Business Source License 1.1
+
+License text copyright (c) 2017 MariaDB Corporation Ab, All Rights Reserved.
+"Business Source License" is a trademark of MariaDB Corporation Ab.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 

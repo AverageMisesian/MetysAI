@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MetysAI - Disassembler</title>
+  <style>
+    body { margin: 0; font-family: monospace; background: #000; color: #fff; }
+    #container { display: flex; height: 100vh; }
+    #sidebar { width: 320px; background: #000; border-right: 1px solid #333; display: flex; flex-direction: column; }
+    #main { flex: 1; display: flex; flex-direction: column; background: #000; }
+    #topbar { padding: 12px; background: #000; border-bottom: 1px solid #333; display: flex; gap: 8px; align-items: center; }
+    #filepath { background: #111; color: #fff; border: 1px solid #333; border-radius: 3px; padding: 4px 8px; font-size: 1em; width: 260px; }
+    #load-btn { background: #333; color: #fff; border: none; border-radius: 3px; padding: 6px 16px; font-size: 1em; cursor: pointer; }
+    #load-btn:hover { background: #444; }
+    /* Search input/button styling matches filepath/load-btn */
+    #search-term {
+      background: #111;
+      color: #fff;
+      border: 1px solid #333;
+      border-radius: 3px;
+      padding: 4px 8px;
+      font-size: 1em;
+      width: 200px;
+    }
+    #search-btn {
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      padding: 6px 16px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    #search-btn:hover { background: #444; }
+
+    /* Filter checkbox and label */
+    #filter-toggle {
+      accent-color: #0ff; /* teal accent to match section headers */
+      cursor: pointer;
+    }
+    #filter-toggle + span,
+    label[for="filter-toggle"],
+    label[style*="filter-toggle"] {
+      color: #fff;
+    }
+    #symbol-tree, #listing, #params { 
+      background: #000; 
+      margin: 12px; 
+      padding: 12px; 
+      min-height: 80px; 
+      overflow-x: auto; 
+      font-family: monospace;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+    #listing { 
+      flex: 2; 
+      white-space: pre;
+      tab-size: 4;
+    }
+    /* Old section title style kept for backward compatibility */
+    .section-title { color: #0ff; margin-bottom: 8px; }
+    .symbol-list { list-style: none; padding: 0; margin: 0; }
+    .symbol-list li { 
+      cursor: pointer; 
+      padding: 2px 0 2px 8px; 
+      color: #fff;
+    }
+    .symbol-list li:hover { background: #222; }
+
+    /* Radare2 exact colors */
+    .r2-section { color: #088; }  /* teal */
+    .r2-offset { color: #080; }   /* green */
+    .r2-bytes { color: #088; }    /* teal */
+    .r2-mnemonic { color: #088; } /* teal */
+    .r2-register { color: #088; } /* teal */
+    .r2-comment { color: #800; }  /* dark red */
+    .r2-symbol { color: #088; }   /* teal */
+    .r2-ascii { color: #088; }    /* teal */
+    .r2-line { 
+      display: flex;
+      padding: 0 4px;
+      font-family: monospace;
+    }
+    .r2-line:hover { background: #111; }
+    
+    .asm-text { 
+      color: #fff; 
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    /* Assembly code specific styles */
+    .asm-container {
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 8px;
+    }
+
+    .asm-line {
+      display: flex;
+      gap: 12px;
+      padding: 2px 4px;
+    }
+
+    .asm-line:hover {
+      background: #111;
+    }
+
+    .asm-address { color: #080; min-width: 100px; }
+    .asm-bytes { color: #666; min-width: 120px; }
+    .asm-instruction { color: #0cc; min-width: 80px; }
+    .asm-operands { color: #fff; }
+    .asm-comment { color: #666; font-style: italic; margin-left: 12px; }
+
+    /* Improve scrollbar styling */
+    ::-webkit-scrollbar { 
+      width: 12px; 
+      height: 12px; 
+      background: #111; 
+    }
+    ::-webkit-scrollbar-thumb { 
+      background: #333;
+      border-radius: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #111;
+      border-radius: 6px;
+    }
+
+    /* Make listing area more flexible */
+    #main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #000;
+      min-width: 0; /* Allow content to shrink */
+    }
+
+    #listing {
+      flex: 1;
+      overflow: auto;
+      padding: 12px;
+      background: #000;
+      white-space: pre;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 200px;
+      max-height: calc(100vh - 200px); /* Leave room for other elements */
+    }
+
+    /* Collapsible panel styles */
+    details.panel {
+      background: #000;
+      border: 1px solid #333;
+      margin: 12px;
+      color: #fff;
+    }
+
+    /* Ensure the listing panel can grow/shrink */
+    details.flex-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0; /* Allow content to shrink */
+    }
+
+    details.panel summary {
+      cursor: pointer;
+      padding: 6px 8px;
+      background: #111;
+      color: #0ff;
+      font-weight: bold;
+      border-bottom: 1px solid #333;
+      list-style: none;
+    }
+
+    /* Remove default arrow for details and use CSS arrow */
+    details.panel summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.panel summary::before {
+      content: '\25BC'; /* Down arrow */
+      display: inline-block;
+      margin-right: 6px;
+      transition: transform 0.2s ease;
+    }
+
+    details.panel[open] summary::before {
+      transform: rotate(0deg);
+    }
+
+    details.panel:not([open]) summary::before {
+      transform: rotate(-90deg); /* Turn arrow when collapsed */
+    }
+
+    /* Nested symbol subsections inside Symbol Tree */
+    details.symbol-subsection {
+      background: #000;
+      border: 1px solid #222;
+      margin-bottom: 6px;
+    }
+
+    details.symbol-subsection summary {
+      cursor: pointer;
+      padding: 4px 8px;
+      background: #111;
+      color: #0ff;
+      font-size: 0.9em;
+      list-style: none;
+    }
+
+    details.symbol-subsection summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.symbol-subsection summary::before {
+      content: '\25BC';
+      display: inline-block;
+      margin-right: 4px;
+      transition: transform 0.2s ease;
+    }
+
+    details.symbol-subsection[open] summary::before {
+      transform: rotate(0deg);
+    }
+
+    details.symbol-subsection:not([open]) summary::before {
+      transform: rotate(-90deg);
+    }
+
+    details.symbol-subsection ul.symbol-list {
+      padding-left: 12px;
+    }
+
+    /* Highlight search matches */
+    .search-highlight {
+      background: #ff0;
+      color: #000;
+    }
+    /* Chat input focus styling */
+    #chat-input:focus {
+      outline: none;
+      border: 1px solid #0ff;
+      box-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+    }
+    
+    /* Loading indicator styles */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    
+    .loading-overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid #333;
+      border-top: 4px solid #0ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .loading-text {
+      color: #0ff;
+      font-size: 18px;
+      margin-top: 20px;
+      text-align: center;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Small inline spinner for buttons */
+    .spinner-small {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #333;
+      border-top: 2px solid #0ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+    #vertical-resizer {
+      width: 6px;
+      cursor: ew-resize;
+      background: #222;
+      z-index: 10;
+    }
+    #horizontal-resizer {
+      height: 6px;
+      cursor: ns-resize;
+      background: #222;
+      z-index: 10;
+    }
+    #sidebar {
+      min-width: 120px;
+      max-width: 600px;
+    }
+    #main {
+      min-width: 200px;
+    }
+    #chat-panel {
+      min-height: 60px;
+      max-height: 70vh;
+      resize: none;
+    }
+    #listing-panel {
+      min-height: 60px;
+      max-height: 80vh;
+      resize: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="topbar">
+    <label>File: <input type="text" id="filepath" placeholder="Path to binary" /></label>
+    <button id="load-btn">Load</button>
+    <!-- Added search controls -->
+    <label style="margin-left:12px;">Search: <input type="text" id="search-term" placeholder="Search in listing" /></label>
+    <button id="search-btn">Search</button>
+    <label style="margin-left:8px; font-size:0.9em;"><input type="checkbox" id="filter-toggle"> Filter lines</label>
+  </div>
+  <div id="container">
+    <div id="sidebar">
+      <!-- Collapsible Symbol Tree panel -->
+      <details id="symbol-tree-panel" class="panel" open>
+        <summary>Symbol Tree</summary>
+        <div id="symbol-tree"></div>
+      </details>
+    </div>
+    <div id="vertical-resizer"></div>
+    <div id="main" style="display:flex;flex-direction:column;min-width:0;">
+      <!-- Collapsible Listing / Disassembly panel -->
+      <details id="listing-panel" class="panel flex-panel" open>
+        <summary>Listing / Disassembly</summary>
+        <div id="listing">Output will appear here.</div>
+      </details>
+      <div id="horizontal-resizer"></div>
+      <div id="chat-panel" class="panel" style="margin:12px;">
+        <div id="chat-area" style="height:180px;overflow-y:auto;background:#111;padding:8px 8px 8px 0;margin-bottom:8px;font-size:14px;"></div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input id="chat-input" type="text" placeholder="Type your question..." style="flex:1;background:#222;color:#fff;border:1px solid #0ff;padding:6px 8px;border-radius:3px;font-size:1em;" />
+          <button id="chat-send-btn" style="background:#333;color:#fff;border:none;border-radius:3px;padding:6px 16px;font-size:1em;cursor:pointer;">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Loading overlay -->
+  <div id="loading-overlay" class="loading-overlay">
+    <div style="text-align: center;">
+      <div class="loading-spinner"></div>
+      <div id="loading-text" class="loading-text">Loading...</div>
+    </div>
+  </div>
+  
+  <script src="renderer.js"></script>
+</body>
+</html> 

@@ -1,0 +1,46 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "go-build": "go build -o build/r2-server.exe ../main.go"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "electron": "^37.2.3",
+    "electron-builder": "^24.8.1"
+  },
+  "build": {
+    "appId": "com.example.aidisassembler",
+    "productName": "AI-Disassembler",
+    "files": [
+      "**/*",
+      "!config.json",
+      "!test/**/*",
+      "!build/**"
+    ],
+    "extraFiles": [
+      "config.json"
+    ],
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": [ "x64" ] },
+        "portable"
+      ]
+    },
+    "extraResources": [
+      {
+        "from": "build",
+        "to": "build",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
+  }
+}
