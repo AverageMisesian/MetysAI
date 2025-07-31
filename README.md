@@ -7,7 +7,8 @@ AI-powered binary analysis tool that combines **Radare2** disassembly with **Cha
 ### 🔍 Binary Analysis
 - **Full Binary Disassembly**: Complete disassembly of executable files using Radare2
 - **Symbol Tree**: Organized view of functions, imports, exports, and strings
-<img width="354" height="354" alt="image" src="https://github.com/user-attachments/assets/d63fd204-6483-4b28-8b69-6efc5737fc84" />
+<img width="661" height="322" alt="image" src="https://github.com/user-attachments/assets/fcdfcb2e-eb83-4a10-bfa9-aff6ec8f33a2" />
+
 
 
 ### 🤖 AI-Powered Analysis
