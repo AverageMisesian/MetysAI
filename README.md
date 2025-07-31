@@ -77,7 +77,7 @@ AI-powered binary analysis tool that combines **Radare2** disassembly with **Cha
 
 ## 📝 License
 
-This project is licensed under the Business Source License 1.1 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Attribution-NonCommercial-ShareAlike 4.0 International - see the [LICENSE](LICENSE) file for details.
 
 **Commercial use requires a separate license.** For commercial licensing inquiries, please contact: daniel@metysai.info
 
